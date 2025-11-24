@@ -8,18 +8,19 @@ import (
 	"net/http"
 )
 
-type googleProfile struct {
-	ID            string `json:"id"`
+type auth0Profile struct {
+	Sub           string `json:"sub"`
 	Email         string `json:"email"`
-	VerifiedEmail bool   `json:"verified_email"`
+	EmailVerified bool   `json:"email_verified"`
 	Name          string `json:"name"`
 	GivenName     string `json:"given_name"`
 	FamilyName    string `json:"family_name"`
 	Picture       string `json:"picture"`
-	HD            string `json:"hd"`
+	Nickname      string `json:"nickname"`
+	UpdatedAt     string `json:"updated_at"`
 }
 
-func FetchGoogleProfile(ctx context.Context, accessToken, url string) (*googleProfile, error) {
+func FetchAuth0Profile(ctx context.Context, accessToken, url string) (*auth0Profile, error) {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return nil, err
@@ -36,7 +37,7 @@ func FetchGoogleProfile(ctx context.Context, accessToken, url string) (*googlePr
 		return nil, fmt.Errorf("unexpected status code: %d: %s", resp.StatusCode, result)
 	}
 
-	var profile googleProfile
+	var profile auth0Profile
 	if err = json.NewDecoder(resp.Body).Decode(&profile); err != nil {
 		return nil, err
 	}

@@ -1,4 +1,4 @@
-module github.com/obot-platform/tools/google-auth-provider
+module github.com/obot-platform/tools/auth0-auth-provider
 
 go 1.25.3
 

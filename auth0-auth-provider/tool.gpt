@@ -1,6 +1,6 @@
 Name: Auth0
 Description: Auth provider for Auth0
-Metadata: envVars: OBOT_GOOGLE_AUTH_PROVIDER_CLIENT_ID,OBOT_GOOGLE_AUTH_PROVIDER_CLIENT_SECRET,OBOT_AUTH_PROVIDER_COOKIE_SECRET,OBOT_AUTH_PROVIDER_EMAIL_DOMAINS
+Metadata: envVars: OBOT_AUTH0_AUTH_PROVIDER_CLIENT_ID,OBOT_AUTH0_AUTH_PROVIDER_CLIENT_SECRET,OBOT_AUTH0_AUTH_PROVIDER_DOMAIN,OBOT_AUTH_PROVIDER_COOKIE_SECRET,OBOT_AUTH_PROVIDER_EMAIL_DOMAINS
 Metadata: noUserAuth: auth0-auth-provider
 Credential: ../placeholder-credential as auth0-auth-provider
 
@@ -15,16 +15,22 @@ Credential: ../placeholder-credential as auth0-auth-provider
     "postgresTablePrefix": "auth0_",
     "envVars": [
         {
-            "name": "OBOT_GOOGLE_AUTH_PROVIDER_CLIENT_ID",
+            "name": "OBOT_AUTH0_AUTH_PROVIDER_CLIENT_ID",
             "friendlyName": "Client ID",
-            "description": "Unique identifier for the application when using Google's OAuth. Can typically be found in Google Cloud Console > Credentials",
+            "description": "Unique identifier for the application when using Auth0's OAuth. Can be found in Auth0 Dashboard > Applications > Your Application > Settings",
             "sensitive": false
         },
         {
-            "name": "OBOT_GOOGLE_AUTH_PROVIDER_CLIENT_SECRET",
+            "name": "OBOT_AUTH0_AUTH_PROVIDER_CLIENT_SECRET",
             "friendlyName": "Client Secret",
-            "description": "Password or key that app uses to authenticate with Google's OAuth. Can typically be found in Google Cloud Console > Credentials",
+            "description": "Password or key that app uses to authenticate with Auth0's OAuth. Can be found in Auth0 Dashboard > Applications > Your Application > Settings",
             "sensitive": true
+        },
+        {
+            "name": "OBOT_AUTH0_AUTH_PROVIDER_DOMAIN",
+            "friendlyName": "Auth0 Domain",
+            "description": "Your Auth0 domain (e.g., https://your-tenant.auth0.com or https://your-custom-domain.com). Can be found in Auth0 Dashboard > Applications > Your Application > Settings",
+            "sensitive": false
         },
         {
             "name": "OBOT_AUTH_PROVIDER_COOKIE_SECRET",

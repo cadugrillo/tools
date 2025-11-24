@@ -20,8 +20,9 @@ import (
 )
 
 type Options struct {
-	ClientID                 string `env:"OBOT_GOOGLE_AUTH_PROVIDER_CLIENT_ID"`
-	ClientSecret             string `env:"OBOT_GOOGLE_AUTH_PROVIDER_CLIENT_SECRET"`
+	ClientID                 string `env:"OBOT_AUTH0_AUTH_PROVIDER_CLIENT_ID"`
+	ClientSecret             string `env:"OBOT_AUTH0_AUTH_PROVIDER_CLIENT_SECRET"`
+	Auth0Domain              string `env:"OBOT_AUTH0_AUTH_PROVIDER_DOMAIN"`
 	ObotServerURL            string `env:"OBOT_SERVER_PUBLIC_URL,OBOT_SERVER_URL"`
 	PostgresConnectionDSN    string `env:"OBOT_AUTH_PROVIDER_POSTGRES_CONNECTION_DSN" optional:"true"`
 	AuthCookieSecret         string `usage:"Secret used to encrypt cookie" env:"OBOT_AUTH_PROVIDER_COOKIE_SECRET"`
@@ -54,10 +55,12 @@ func main() {
 	}
 
 	legacyOpts := options.NewLegacyOptions()
-	legacyOpts.LegacyProvider.ProviderType = "auth0"
+	legacyOpts.LegacyProvider.ProviderType = "oidc"
 	legacyOpts.LegacyProvider.ProviderName = "auth0"
 	legacyOpts.LegacyProvider.ClientID = opts.ClientID
 	legacyOpts.LegacyProvider.ClientSecret = opts.ClientSecret
+	legacyOpts.LegacyProvider.OIDCIssuerURL = opts.Auth0Domain
+	legacyOpts.LegacyProvider.Scope = "openid profile email"
 
 	oauthProxyOpts, err := legacyOpts.ToOptions()
 	if err != nil {
@@ -112,7 +115,7 @@ func main() {
 	})
 	mux.HandleFunc("/obot-get-state", state.ObotGetState(oauthProxy))
 	mux.HandleFunc("/obot-get-user-info", func(w http.ResponseWriter, r *http.Request) {
-		userInfo, err := profile.FetchGoogleProfile(r.Context(), r.Header.Get("Authorization"), "https://openidconnect.googleapis.com/v1/userinfo")
+		userInfo, err := profile.FetchAuth0Profile(r.Context(), r.Header.Get("Authorization"), opts.Auth0Domain+"/userinfo")
 		if err != nil {
 			http.Error(w, fmt.Sprintf("failed to fetch user info: %v", err), http.StatusBadRequest)
 			return
