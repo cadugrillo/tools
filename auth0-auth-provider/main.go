@@ -16,7 +16,7 @@ import (
 	"github.com/oauth2-proxy/oauth2-proxy/v7/pkg/validation"
 	"github.com/obot-platform/tools/auth-providers-common/pkg/env"
 	"github.com/obot-platform/tools/auth-providers-common/pkg/state"
-	"github.com/obot-platform/tools/google-auth-provider/pkg/profile"
+	"github.com/obot-platform/tools/auth0-auth-provider/pkg/profile"
 )
 
 type Options struct {
@@ -32,36 +32,36 @@ type Options struct {
 func main() {
 	var opts Options
 	if err := env.LoadEnvForStruct(&opts); err != nil {
-		fmt.Printf("ERROR: google-auth-provider: failed to load options: %v\n", err)
+		fmt.Printf("ERROR: auth0-auth-provider: failed to load options: %v\n", err)
 		os.Exit(1)
 	}
 
 	refreshDuration, err := time.ParseDuration(opts.AuthTokenRefreshDuration)
 	if err != nil {
-		fmt.Printf("ERROR: google-auth-provider: failed to parse token refresh duration: %v\n", err)
+		fmt.Printf("ERROR: auth0-auth-provider: failed to parse token refresh duration: %v\n", err)
 		os.Exit(1)
 	}
 
 	if refreshDuration < 0 {
-		fmt.Printf("ERROR: google-auth-provider: token refresh duration must be greater than 0\n")
+		fmt.Printf("ERROR: auth0-auth-provider: token refresh duration must be greater than 0\n")
 		os.Exit(1)
 	}
 
 	cookieSecret, err := base64.StdEncoding.DecodeString(opts.AuthCookieSecret)
 	if err != nil {
-		fmt.Printf("ERROR: google-auth-provider: failed to decode cookie secret: %v\n", err)
+		fmt.Printf("ERROR: auth0-auth-provider: failed to decode cookie secret: %v\n", err)
 		os.Exit(1)
 	}
 
 	legacyOpts := options.NewLegacyOptions()
-	legacyOpts.LegacyProvider.ProviderType = "google"
-	legacyOpts.LegacyProvider.ProviderName = "google"
+	legacyOpts.LegacyProvider.ProviderType = "auth0"
+	legacyOpts.LegacyProvider.ProviderName = "auth0"
 	legacyOpts.LegacyProvider.ClientID = opts.ClientID
 	legacyOpts.LegacyProvider.ClientSecret = opts.ClientSecret
 
 	oauthProxyOpts, err := legacyOpts.ToOptions()
 	if err != nil {
-		fmt.Printf("ERROR: google-auth-provider: failed to convert legacy options to new options: %v\n", err)
+		fmt.Printf("ERROR: auth0-auth-provider: failed to convert legacy options to new options: %v\n", err)
 		os.Exit(1)
 	}
 
@@ -70,7 +70,7 @@ func main() {
 	if opts.PostgresConnectionDSN != "" {
 		oauthProxyOpts.Session.Type = options.PostgresSessionStoreType
 		oauthProxyOpts.Session.Postgres.ConnectionDSN = opts.PostgresConnectionDSN
-		oauthProxyOpts.Session.Postgres.TableNamePrefix = "google_"
+		oauthProxyOpts.Session.Postgres.TableNamePrefix = "auth0_"
 	}
 	oauthProxyOpts.Cookie.Refresh = refreshDuration
 	oauthProxyOpts.Cookie.Name = "obot_access_token"
@@ -91,13 +91,13 @@ func main() {
 	oauthProxyOpts.Logging.StandardEnabled = false
 
 	if err = validation.Validate(oauthProxyOpts); err != nil {
-		fmt.Printf("ERROR: google-auth-provider: failed to validate options: %v\n", err)
+		fmt.Printf("ERROR: auth0-auth-provider: failed to validate options: %v\n", err)
 		os.Exit(1)
 	}
 
 	oauthProxy, err := oauth2proxy.NewOAuthProxy(oauthProxyOpts, oauth2proxy.NewValidator(oauthProxyOpts.EmailDomains, oauthProxyOpts.AuthenticatedEmailsFile))
 	if err != nil {
-		fmt.Printf("ERROR: google-auth-provider: failed to create oauth2 proxy: %v\n", err)
+		fmt.Printf("ERROR: auth0-auth-provider: failed to create oauth2 proxy: %v\n", err)
 		os.Exit(1)
 	}
 
@@ -127,7 +127,7 @@ func main() {
 
 	fmt.Printf("listening on 127.0.0.1:%s\n", port)
 	if err := http.ListenAndServe("127.0.0.1:"+port, mux); !errors.Is(err, http.ErrServerClosed) {
-		fmt.Printf("ERROR: google-auth-provider: failed to listen and serve: %v\n", err)
+		fmt.Printf("ERROR: auth0-auth-provider: failed to listen and serve: %v\n", err)
 		os.Exit(1)
 	}
 }

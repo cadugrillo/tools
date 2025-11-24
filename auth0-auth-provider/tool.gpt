@@ -1,18 +1,18 @@
-Name: Google
-Description: Auth provider for Google
+Name: Auth0
+Description: Auth provider for Auth0
 Metadata: envVars: OBOT_GOOGLE_AUTH_PROVIDER_CLIENT_ID,OBOT_GOOGLE_AUTH_PROVIDER_CLIENT_SECRET,OBOT_AUTH_PROVIDER_COOKIE_SECRET,OBOT_AUTH_PROVIDER_EMAIL_DOMAINS
-Metadata: noUserAuth: google-auth-provider
-Credential: ../placeholder-credential as google-auth-provider
+Metadata: noUserAuth: auth0-auth-provider
+Credential: ../placeholder-credential as auth0-auth-provider
 
 #!sys.daemon ${GPTSCRIPT_TOOL_DIR}/bin/gptscript-go-tool
 
 ---
-!metadata:Google:providerMeta
+!metadata:Auth0:providerMeta
 {
-    "icon": "/admin/assets/google_icon_small.png",
-    "iconDark": "/admin/assets/google_icon_small.png",
-    "link": "https://google.com/",
-    "postgresTablePrefix": "google_",
+    "icon": "/admin/assets/auth0_icon_small.png",
+    "iconDark": "/admin/assets/auth0_icon_dark_small.png",
+    "link": "https://auth0.com/",
+    "postgresTablePrefix": "auth0_",
     "envVars": [
         {
             "name": "OBOT_GOOGLE_AUTH_PROVIDER_CLIENT_ID",
